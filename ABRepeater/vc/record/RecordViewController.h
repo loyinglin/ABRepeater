@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-@interface RecordViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, AVAudioPlayerDelegate, AVAudioRecorderDelegate>
+@interface RecordViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, AVAudioRecorderDelegate>
 
 @property (nonatomic , strong) IBOutlet UIButton* myRecordButton; //start end button
 @property (nonatomic , strong) IBOutlet UIButton* myCancelButton; //cancel
@@ -17,6 +17,5 @@
 //@property (nonatomic , strong) IBOutlet UIButton* 
 
 @property (nonatomic , strong) IBOutlet UITableView* myRecordTable;
-@property (nonatomic , strong) NSMutableArray* myRecordArray;
 
 @end

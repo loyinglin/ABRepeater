@@ -41,6 +41,10 @@
 		FD68EA221BF1EC69007DD9E2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD68EA211BF1EC69007DD9E2 /* AVFoundation.framework */; };
 		FD68EA241BF1EC7B007DD9E2 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD68EA231BF1EC7B007DD9E2 /* UIKit.framework */; };
 		FD68EA271BF1EF1A007DD9E2 /* RecordViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FD68EA261BF1EF1A007DD9E2 /* RecordViewCell.m */; settings = {ASSET_TAGS = (); }; };
+		FD68EA2A1BF317EA007DD9E2 /* PlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FD68EA291BF317EA007DD9E2 /* PlayViewController.m */; settings = {ASSET_TAGS = (); }; };
+		FD68EA2D1BF31A7B007DD9E2 /* DataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FD68EA2C1BF31A7B007DD9E2 /* DataModel.m */; settings = {ASSET_TAGS = (); }; };
+		FD68EA301BF31BC8007DD9E2 /* DataBase.m in Sources */ = {isa = PBXBuildFile; fileRef = FD68EA2F1BF31BC8007DD9E2 /* DataBase.m */; settings = {ASSET_TAGS = (); }; };
+		FD68EA331BF330B2007DD9E2 /* NSObject+LYUITipsView.m in Sources */ = {isa = PBXBuildFile; fileRef = FD68EA321BF330B2007DD9E2 /* NSObject+LYUITipsView.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,6 +109,14 @@
 		FD68EA231BF1EC7B007DD9E2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FD68EA251BF1EF1A007DD9E2 /* RecordViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordViewCell.h; sourceTree = "<group>"; };
 		FD68EA261BF1EF1A007DD9E2 /* RecordViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordViewCell.m; sourceTree = "<group>"; };
+		FD68EA281BF317EA007DD9E2 /* PlayViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayViewController.h; sourceTree = "<group>"; };
+		FD68EA291BF317EA007DD9E2 /* PlayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayViewController.m; sourceTree = "<group>"; };
+		FD68EA2B1BF31A7B007DD9E2 /* DataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataModel.h; sourceTree = "<group>"; };
+		FD68EA2C1BF31A7B007DD9E2 /* DataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataModel.m; sourceTree = "<group>"; };
+		FD68EA2E1BF31BC8007DD9E2 /* DataBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBase.h; sourceTree = "<group>"; };
+		FD68EA2F1BF31BC8007DD9E2 /* DataBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataBase.m; sourceTree = "<group>"; };
+		FD68EA311BF330B2007DD9E2 /* NSObject+LYUITipsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+LYUITipsView.h"; sourceTree = "<group>"; };
+		FD68EA321BF330B2007DD9E2 /* NSObject+LYUITipsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+LYUITipsView.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -231,6 +243,8 @@
 		FD68EA101BF1EA84007DD9E2 /* extension */ = {
 			isa = PBXGroup;
 			children = (
+				FD68EA311BF330B2007DD9E2 /* NSObject+LYUITipsView.h */,
+				FD68EA321BF330B2007DD9E2 /* NSObject+LYUITipsView.m */,
 			);
 			path = extension;
 			sourceTree = "<group>";
@@ -238,6 +252,10 @@
 		FD68EA111BF1EA84007DD9E2 /* model */ = {
 			isa = PBXGroup;
 			children = (
+				FD68EA2B1BF31A7B007DD9E2 /* DataModel.h */,
+				FD68EA2C1BF31A7B007DD9E2 /* DataModel.m */,
+				FD68EA2E1BF31BC8007DD9E2 /* DataBase.h */,
+				FD68EA2F1BF31BC8007DD9E2 /* DataBase.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -257,6 +275,8 @@
 		FD68EA171BF1EA84007DD9E2 /* detail */ = {
 			isa = PBXGroup;
 			children = (
+				FD68EA281BF317EA007DD9E2 /* PlayViewController.h */,
+				FD68EA291BF317EA007DD9E2 /* PlayViewController.m */,
 			);
 			path = detail;
 			sourceTree = "<group>";
@@ -426,9 +446,13 @@
 			files = (
 				FD68E9B51BF1E48F007DD9E2 /* AppDelegate.m in Sources */,
 				FD68EA201BF1EAC7007DD9E2 /* RecordViewController.m in Sources */,
+				FD68EA301BF31BC8007DD9E2 /* DataBase.m in Sources */,
 				FD68E9B21BF1E48F007DD9E2 /* main.m in Sources */,
 				FD68EA271BF1EF1A007DD9E2 /* RecordViewCell.m in Sources */,
+				FD68EA2D1BF31A7B007DD9E2 /* DataModel.m in Sources */,
+				FD68EA2A1BF317EA007DD9E2 /* PlayViewController.m in Sources */,
 				FD68EA1D1BF1EA84007DD9E2 /* ViewController.m in Sources */,
+				FD68EA331BF330B2007DD9E2 /* NSObject+LYUITipsView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -653,6 +677,7 @@
 				FD68E9DC1BF1E48F007DD9E2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FD68E9DD1BF1E48F007DD9E2 /* Build configuration list for PBXNativeTarget "ABRepeaterTests" */ = {
 			isa = XCConfigurationList;
@@ -661,6 +686,7 @@
 				FD68E9DF1BF1E48F007DD9E2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FD68E9E01BF1E48F007DD9E2 /* Build configuration list for PBXNativeTarget "ABRepeaterUITests" */ = {
 			isa = XCConfigurationList;
@@ -669,6 +695,7 @@
 				FD68E9E21BF1E48F007DD9E2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

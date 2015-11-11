@@ -5,29 +5,23 @@
 //  Created by 林伟池 on 15/11/10.
 //  Copyright © 2015年 林伟池. All rights reserved.
 //
-
+#import "DataModel.h"
+#import "PlayViewController.h"
 #import "RecordViewController.h"
 #import "RecordViewCell.h"
+#import "NSObject+LYUITipsView.h"
 
 @interface RecordViewController ()
 @property (nonatomic, strong) AVAudioRecorder* myRecorder;
-@property (nonatomic, strong) AVAudioPlayer* myPlayer;
-
-@property (nonatomic) long mySeedId;
+@property (nonatomic, strong) Record* myPlayReocord;
 @end
 
 @implementation RecordViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.mySeedId = 1;
     // Do any additional setup after loading the view.
-    self.myRecordArray = [[NSMutableArray alloc] init];
-    [self loadRecord];
     
-    //audio file
-    NSArray* paths = @[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject], @"__RecordTmp.m4a"];
-    NSURL* outputUrl = [NSURL fileURLWithPathComponents:paths];
     
     //audio session
     AVAudioSession* session = [AVAudioSession sharedInstance];
@@ -37,7 +31,7 @@
     NSDictionary* recordSetting = @{AVFormatIDKey:@(kAudioFormatMPEG4AAC), AVSampleRateKey:@(44100.0), AVNumberOfChannelsKey:@(2)};
     
     //init and prepare the recorder
-    self.myRecorder = [[AVAudioRecorder alloc] initWithURL:outputUrl settings:recordSetting error:nil];
+    self.myRecorder = [[AVAudioRecorder alloc] initWithURL:[[DataModel instance] getRecordTmpUrl] settings:recordSetting error:nil];
     self.myRecorder.delegate = self;
     self.myRecorder.meteringEnabled = YES;
     [self.myRecorder prepareToRecord];
@@ -61,20 +55,11 @@
 
 #pragma mark - view init
 
-- (void)loadRecord{
-    [self.myRecordArray removeAllObjects];
-    NSString* paths = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-//    [[NSFileManager defaultManager] removeItemAtPath:paths error:nil];
-    NSDirectoryEnumerator* files = [[NSFileManager defaultManager] enumeratorAtPath:paths];
-    NSString* fileName;
-    while ((fileName = [files nextObject]) != nil) {
-        
-        NSString* title = [[fileName  lastPathComponent] stringByDeletingPathExtension];
-
-        NSURL* url = [NSURL fileURLWithPath:[paths stringByAppendingPathComponent:fileName]];
-        if (![title isEqualToString:@"__RecordTmp"]) {
-            [self.myRecordArray addObject:@{@"title":title, @"url":url}];
-        }
+#pragma mark - play
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    if ([segue.identifier isEqualToString: @"open_play_record_board"]) {
+        PlayViewController* controller = segue.destinationViewController;
+        controller.myPlayRecord = self.myPlayReocord;
     }
 }
 
@@ -83,25 +68,11 @@
     if (!self.myRecorder.recording) {      //开始录音
         [self.myRecordButton setTitle:@"结束" forState:UIControlStateNormal];
         [self startRecord];
+        [self presentMessageTips:@"开始录音"];
     }
     else{   //结束录音
         [self.myRecordButton setTitle:@"开始" forState:UIControlStateNormal];
         [self stopRecordWithSave:YES];
-    }
-}
-
-- (void)startRecord{
-    AVAudioSession* session = [AVAudioSession sharedInstance];
-    [session setActive:YES error:nil];
-    [self.myRecorder record];
-}
-
-- (void)stopRecordWithSave:(BOOL)bSave{
-    AVAudioSession* session = [AVAudioSession sharedInstance];
-    [self.myRecorder stop];
-    [session setActive:NO error:nil];
-    if (bSave) {
-        [self saveRecord];
     }
 }
 
@@ -110,46 +81,22 @@
     [self stopRecordWithSave:NO];
 }
 
-- (void)saveRecord{
-    NSArray* paths = @[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject], @"__RecordTmp.m4a"];
-    NSURL* copyFromUrl = [NSURL fileURLWithPathComponents:paths];
-    
-    //name
-    NSDate* now = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
-    NSDateFormatter* format = [[NSDateFormatter alloc] init];
-    [format setDateFormat:@"yyMMddHHmmss"];
-    NSString* name = [format stringFromDate:now];
-    
-    
-    paths = @[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject], [NSString stringWithFormat:@"%@.m4a", name]];
-    NSURL* copyToUrl = [NSURL fileURLWithPathComponents:paths];
-    [[NSFileManager defaultManager] copyItemAtURL:copyFromUrl toURL:copyToUrl error:nil];
-    
-    
-    [self.myRecordArray addObject:@{@"title":name, @"url":copyToUrl}];
-    [self.myRecordTable reloadData];
-}
 
-- (void)playRecord:(NSURL*)url{
-    if (self.myPlayer) {
-        [self.myPlayer stop];
-        AVAudioSession* session = [AVAudioSession sharedInstance];
-        [session setActive:NO error:nil];
-        self.myPlayer = nil;
-    }
-    
-    self.myPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
-    [self.myPlayer setDelegate:self];
+- (void)startRecord{
     AVAudioSession* session = [AVAudioSession sharedInstance];
     [session setActive:YES error:nil];
-    [self.myPlayer play];
+    [self.myRecorder record];
 }
 
-- (void)onDelete:(NSIndexPath*)index{
-    NSURL* url = [self.myRecordArray[index.row] objectForKey:@"url"];
-    [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
-    [self.myRecordArray removeObjectAtIndex:index.row];
-    [self.myRecordTable deleteRowsAtIndexPaths:@[index] withRowAnimation:UITableViewRowAnimationFade];
+- (void)stopRecordWithSave:(BOOL)bSave{
+    [self dismissTips];
+    AVAudioSession* session = [AVAudioSession sharedInstance];
+    [self.myRecorder stop];
+    [session setActive:NO error:nil];
+    if (bSave) {
+        [[DataModel instance] saveRecord];
+        [self.myRecordTable reloadData];
+    }
 }
 
 
@@ -158,11 +105,13 @@
 - (IBAction)onTouchInside:(UIButton*)sender{
     NSLog(@"onTouchInside");
     [sender setTitle:@"松开 结束" forState:UIControlStateNormal];
+    [self presentLoadingTips:@"正在录音"];
 }
 
 - (IBAction)onTouchOutside:(UIButton*)sender{
     NSLog(@"onTouchOutside");
     [sender setTitle:@"上移 取消" forState:UIControlStateNormal];
+    [self presentLoadingTips:@"上移 取消"];
 }
 
 - (IBAction)onToucnCancel:(UIButton*)sender{
@@ -181,11 +130,12 @@
     NSLog(@"begin");
     [sender setTitle:@"松开 结束" forState:UIControlStateNormal];
     [self startRecord];
+    [self presentLoadingTips:@"正在录音"];
 }
 #pragma mark - delegate
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.myRecordArray.count;
+    return [[DataModel instance] getRecordsCount];
 }
 
 // Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
@@ -193,13 +143,16 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     RecordViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
-    cell.myTitleLabel.text = [[self.myRecordArray objectAtIndex:indexPath.row] objectForKey:@"title"];
+    
+    cell.myTitleLabel.text = [[DataModel instance] getRecordByIndex:indexPath.row].title;
     return cell;
 }
 
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSURL* url = [self.myRecordArray[indexPath.row] objectForKey:@"url"];
-    [self playRecord:url];
+//    NSURL* url = [[DataModel instance] getRecordByIndex:indexPath.row].url;
+//    [self playRecord:url];
+    self.myPlayReocord = [[DataModel instance] getRecordByIndex:indexPath.row];
+    [self performSegueWithIdentifier:@"open_play_record_board" sender:self];
     return nil;
 }
 
@@ -219,7 +172,10 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         
         // Delete the row from the data source.
-        [self onDelete:indexPath];
+        
+        if ([[DataModel instance] deleteRecordByIndex:indexPath.row]) {
+            [self.myRecordTable deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        }
         
     }
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -228,12 +184,6 @@
 }
 
 #pragma mark - AVAudioPlayerDelegate
-
-- (void) audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
-    NSLog(@"play end");
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setActive:NO error:nil];
-}
 
 
 - (void) audioRecorderDidFinishRecording:(AVAudioRecorder *)avrecorder successfully:(BOOL)flag {
