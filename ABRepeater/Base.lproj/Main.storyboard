@@ -134,7 +134,13 @@
                             <constraint firstAttribute="trailing" secondItem="wPc-y4-ZBr" secondAttribute="trailing" id="oq8-k2-s0O"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="录音" id="NcR-db-Efr"/>
+                    <navigationItem key="navigationItem" title="录音" id="NcR-db-Efr">
+                        <barButtonItem key="leftBarButtonItem" title="编辑" id="tiI-40-8vD">
+                            <connections>
+                                <action selector="onLeftButton:" destination="BYZ-38-t0r" id="Bxt-a3-EOu"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="myCancelButton" destination="HRl-4m-b8z" id="fpb-Cw-jRa"/>
                         <outlet property="myRecordButton" destination="A3T-YN-EGq" id="ahY-4J-OXv"/>
@@ -162,10 +168,10 @@
                                 <rect key="frame" x="0.0" y="64" width="600" height="150"/>
                                 <subviews>
                                     <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="uR0-QP-gsI">
-                                        <rect key="frame" x="92" y="32" width="429" height="2"/>
+                                        <rect key="frame" x="61" y="32" width="460" height="2"/>
                                     </progressView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ixW-PN-Emb">
-                                        <rect key="frame" x="41" y="24" width="41.5" height="18"/>
+                                        <rect key="frame" x="10" y="24" width="41.5" height="18"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <color key="textColor" red="0.36862745099999999" green="0.36862745099999999" blue="0.36862745099999999" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -178,6 +184,7 @@
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qGL-hA-eYy">
                                         <rect key="frame" x="25" y="60" width="45" height="30"/>
+                                        <color key="backgroundColor" red="0.94117647059999998" green="0.94117647059999998" blue="0.94117647059999998" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="45" id="yVQ-Io-9E3"/>
                                         </constraints>
@@ -185,6 +192,7 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i0p-YE-Khn">
                                         <rect key="frame" x="91" y="60" width="45" height="30"/>
+                                        <color key="backgroundColor" red="0.94117647059999998" green="0.94117647059999998" blue="0.94117647059999998" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="45" id="g6j-Za-MG8"/>
                                         </constraints>
@@ -193,15 +201,9 @@
                                             <action selector="onPlay:" destination="Tg9-P1-Wnv" eventType="touchUpInside" id="xQa-wH-w9r"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B27-dZ-2h6">
-                                        <rect key="frame" x="277.5" y="60" width="45" height="30"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="45" id="ekH-JN-QRj"/>
-                                        </constraints>
-                                        <state key="normal" title="A-B"/>
-                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F1c-WY-6jd">
                                         <rect key="frame" x="529" y="60" width="45" height="30"/>
+                                        <color key="backgroundColor" red="0.94117647059999998" green="0.94117647059999998" blue="0.94117647059999998" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="45" id="WDt-Rr-oUc"/>
                                         </constraints>
@@ -211,7 +213,8 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rMW-wg-c1u">
-                                        <rect key="frame" x="415" y="60" width="45" height="30"/>
+                                        <rect key="frame" x="454" y="60" width="45" height="30"/>
+                                        <color key="backgroundColor" red="0.94117647059999998" green="0.94117647059999998" blue="0.94117647059999998" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="45" id="93Z-N8-xDC"/>
                                         </constraints>
@@ -220,11 +223,22 @@
                                             <action selector="onLast:" destination="Tg9-P1-Wnv" eventType="touchUpInside" id="c6O-RL-7ci"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B27-dZ-2h6">
+                                        <rect key="frame" x="265" y="60" width="70" height="30"/>
+                                        <color key="backgroundColor" red="0.94117647059999998" green="0.94117647059999998" blue="0.94117647059999998" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="70" id="ekH-JN-QRj"/>
+                                        </constraints>
+                                        <state key="normal" title="设置结束"/>
+                                        <connections>
+                                            <action selector="onRepeat:" destination="Tg9-P1-Wnv" eventType="touchUpInside" id="xZL-J8-CJX"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="ixW-PN-Emb" firstAttribute="top" secondItem="i3d-EB-yDE" secondAttribute="top" constant="24" id="4RM-9y-Zp9"/>
-                                    <constraint firstItem="F1c-WY-6jd" firstAttribute="leading" secondItem="rMW-wg-c1u" secondAttribute="trailing" constant="69" id="EQ1-pc-XDH"/>
+                                    <constraint firstItem="F1c-WY-6jd" firstAttribute="leading" secondItem="rMW-wg-c1u" secondAttribute="trailing" constant="30" id="EQ1-pc-XDH"/>
                                     <constraint firstItem="qGL-hA-eYy" firstAttribute="top" secondItem="ixW-PN-Emb" secondAttribute="bottom" constant="18" id="Fv9-AW-kb8"/>
                                     <constraint firstItem="7Ed-fN-HM0" firstAttribute="leading" secondItem="uR0-QP-gsI" secondAttribute="trailing" constant="10" id="ID8-fx-wQu"/>
                                     <constraint firstItem="rMW-wg-c1u" firstAttribute="centerY" secondItem="F1c-WY-6jd" secondAttribute="centerY" id="Kja-xo-lut"/>
@@ -241,7 +255,7 @@
                                     <constraint firstItem="B27-dZ-2h6" firstAttribute="centerX" secondItem="i3d-EB-yDE" secondAttribute="centerX" id="t88-v6-Jw8"/>
                                     <constraint firstItem="F1c-WY-6jd" firstAttribute="top" secondItem="7Ed-fN-HM0" secondAttribute="bottom" constant="18" id="tRn-5g-I7q"/>
                                     <constraint firstItem="7Ed-fN-HM0" firstAttribute="top" secondItem="i3d-EB-yDE" secondAttribute="top" constant="24" id="vPJ-4X-ksS"/>
-                                    <constraint firstItem="ixW-PN-Emb" firstAttribute="leading" secondItem="i3d-EB-yDE" secondAttribute="leading" constant="41" id="yy6-zH-zY4"/>
+                                    <constraint firstItem="ixW-PN-Emb" firstAttribute="leading" secondItem="i3d-EB-yDE" secondAttribute="leading" constant="10" id="yy6-zH-zY4"/>
                                 </constraints>
                                 <variation key="default">
                                     <mask key="constraints">
@@ -285,6 +299,7 @@
                     <connections>
                         <outlet property="myEndLabel" destination="7Ed-fN-HM0" id="TxC-cJ-Ux5"/>
                         <outlet property="myProcess" destination="uR0-QP-gsI" id="oJD-Df-Ba8"/>
+                        <outlet property="myRepeatButton" destination="B27-dZ-2h6" id="dZk-S0-8B3"/>
                         <outlet property="myStartLabel" destination="ixW-PN-Emb" id="n8s-ZS-FXd"/>
                     </connections>
                 </viewController>

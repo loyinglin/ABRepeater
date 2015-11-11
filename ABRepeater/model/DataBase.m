@@ -13,3 +13,16 @@
 
 
 @end
+
+
+@implementation Repeat
+
+-(instancetype)init{
+    self = [super init];
+    
+//    self.timeA = self.timeB = -1;
+    
+    return self;
+}
+
+@end

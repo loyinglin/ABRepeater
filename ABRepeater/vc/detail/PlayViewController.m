@@ -12,6 +12,7 @@
 @property (nonatomic, strong) AVAudioPlayer* myPlayer;
 @property (nonatomic) BOOL myPlaying;
 @property (nonatomic, strong) NSTimer* myTimer;
+@property (nonatomic, strong) Repeat* myRepeat;
 @end
 
 @implementation PlayViewController
@@ -68,6 +69,24 @@
     }
 }
 
+- (IBAction)onRepeat:(UIButton*)sender{
+    if (!self.myPlaying) {
+        return;
+    }
+    if (!self.myRepeat) { //进入repeat模式
+        self.myRepeat = [Repeat new];
+        self.myRepeat.timeA = self.myPlayer.currentTime;
+        [sender setTitle:@"设置结束" forState:UIControlStateNormal];
+    }
+    else if (self.myRepeat.timeB){ //repeatB已经有了
+        self.myRepeat = nil;
+        [sender setTitle:@"A-B" forState:UIControlStateNormal];
+    }
+    else{ //设置b端
+        self.myRepeat.timeB = self.myPlayer.currentTime;
+        [sender setTitle:@"取消复读" forState:UIControlStateNormal];
+    }
+}
 #pragma mark - ui
 
 - (void)prepareToPlay{
@@ -80,6 +99,8 @@
     
     self.myPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:self.myPlayRecord.url error:nil];
     [self.myPlayer setDelegate:self];
+    
+    self.myRepeat = nil;
 }
 
 - (void)playRecord{
@@ -90,13 +111,19 @@
 }
 
 - (void)onProgress{
+    if (self.myRepeat && self.myRepeat.timeB) { //复读模式中
+        if (self.myPlayer.currentTime > self.myRepeat.timeB) {
+            self.myPlayer.currentTime = self.myRepeat.timeA;
+        }
+    }
+    
     [self.myProcess setProgress:(self.myPlayer.currentTime / self.myPlayer.duration) animated:NO];
     [self showCurrentTime];
 }
 
 - (void)showCurrentTime{
     int time = self.myPlayer.currentTime;
-    self.myStartLabel.text = [NSString stringWithFormat:@"%20d:%02d", time / 60, time % 60];
+    self.myStartLabel.text = [NSString stringWithFormat:@"%02d:%02d", time / 60, time % 60];
     time = self.myPlayer.duration;
     self.myEndLabel.text = [NSString stringWithFormat:@"%02d:%02d", time / 60, time % 60];
 }
@@ -105,6 +132,8 @@
 - (void) audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
     NSLog(@"play end");
     self.myPlaying = NO;
+    self.myRepeat = nil;
+    [self.myRepeatButton setTitle:@"A-B" forState:UIControlStateNormal];
     AVAudioSession *session = [AVAudioSession sharedInstance];
     [session setActive:NO error:nil];
 }

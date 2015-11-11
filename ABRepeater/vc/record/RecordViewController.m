@@ -63,7 +63,18 @@
     }
 }
 
-#pragma mark - ui
+#pragma mark - action
+
+- (IBAction)onLeftButton:(UIBarButtonItem*)sender{
+    NSLog(@"%@", [sender description]);
+    if (!self.myRecordTable.editing) {
+        [self.myRecordTable setEditing:YES animated:YES];
+    }
+    else {
+        [self.myRecordTable setEditing:NO animated:NO];
+    }
+}
+
 - (IBAction)onStartRecord:(id)sender{
     if (!self.myRecorder.recording) {      //开始录音
         [self.myRecordButton setTitle:@"结束" forState:UIControlStateNormal];
@@ -81,6 +92,8 @@
     [self stopRecordWithSave:NO];
 }
 
+
+#pragma mark - ui
 
 - (void)startRecord{
     AVAudioSession* session = [AVAudioSession sharedInstance];
@@ -133,6 +146,11 @@
     [self presentLoadingTips:@"正在录音"];
 }
 #pragma mark - delegate
+// 多选删除 暂不支持
+//- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
+//}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [[DataModel instance] getRecordsCount];
@@ -151,6 +169,9 @@
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{
 //    NSURL* url = [[DataModel instance] getRecordByIndex:indexPath.row].url;
 //    [self playRecord:url];
+    if (tableView.editing) {
+        return indexPath;
+    }
     self.myPlayReocord = [[DataModel instance] getRecordByIndex:indexPath.row];
     [self performSegueWithIdentifier:@"open_play_record_board" sender:self];
     return nil;

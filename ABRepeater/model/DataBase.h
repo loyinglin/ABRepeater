@@ -16,3 +16,9 @@
 
 @end
 
+
+@interface Repeat : NSObject
+@property (nonatomic) int timeA;
+@property (nonatomic) int timeB;
+
+@end

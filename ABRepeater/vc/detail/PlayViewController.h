@@ -17,5 +17,6 @@
 @property (nonatomic , strong) IBOutlet UIProgressView* myProcess;
 @property (nonatomic , strong) IBOutlet UILabel*    myStartLabel;
 @property (nonatomic , strong) IBOutlet UILabel*    myEndLabel;
+@property (nonatomic , strong) IBOutlet UIButton*   myRepeatButton;
 
 @end
