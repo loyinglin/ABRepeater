@@ -82,10 +82,10 @@
     NSURL* copyFromUrl = [NSURL fileURLWithPathComponents:paths];
     
     //name
-    NSDate* now = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
-    NSDateFormatter* format = [[NSDateFormatter alloc] init];
-    [format setDateFormat:@"yyMMddHHmmss"];
-    NSString* name = [format stringFromDate:now];
+//    NSDate* now = [[NSDate alloc] initWithTimeIntervalSinceNow:0];
+//    NSDateFormatter* format = [[NSDateFormatter alloc] init];
+//    [format setDateFormat:@"yyMMddHHmmss"];
+    NSString* name = [self getOneNewTitle];//[format stringFromDate:now];
     
     
     paths = @[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject], [NSString stringWithFormat:@"%@.m4a", name]];
@@ -96,6 +96,28 @@
     item.title = name;
     item.url = copyToUrl;
     [myRecordArray addObject:item];
+}
+
+- (NSString*)getOneNewTitle{
+    NSString* ret = [NSString stringWithFormat:@"%ld", time(NULL)];
+    for (int i = 0; i < 100; ++i) {
+        NSString* newName = [NSString stringWithFormat:@"新录音%d", i];
+        if ([self isNewTitle:newName]) {
+            ret = newName;
+            break;
+        }
+    }
+    return ret;
+}
+
+- (BOOL)isNewTitle:(NSString*)title{
+    BOOL ret = YES;
+    for (Record* item in myRecordArray) {
+        if ([item.title isEqualToString:title]) {
+            ret = NO;
+        }
+    }
+    return ret;
 }
 
 - (BOOL)deleteRecordByIndex:(long)index{

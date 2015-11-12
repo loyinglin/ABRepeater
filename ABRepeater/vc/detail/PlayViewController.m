@@ -16,10 +16,9 @@
 @property (nonatomic, strong) Repeat*           myRepeat;
 
 // state
-@property (nonatomic) float                     myPlayRate;
+@property (nonatomic) long                     myPlayRate;
 @property (nonatomic) BOOL                      myPlayCycle;
 @property (nonatomic) BOOL                      myPlaying;
-@property (nonatomic) float                     myPlayVolume;
 
 @end
 
@@ -30,9 +29,8 @@
     // Do any additional setup after loading the view.
     self.myPlaying = NO;
     self.myPlayCycle = NO;
-    self.myPlayRate = 1.0;
-    self.myPlayVolume = [AVAudioSession sharedInstance].outputVolume;
-    [self.myVolumeSlider setValue:self.myPlayVolume];
+    self.myPlayRate = 10;
+    [self.myVolumeSlider setValue:[AVAudioSession sharedInstance].outputVolume];
     
     self.myTitleText.text = self.myPlayRecord.title;
     
@@ -61,12 +59,12 @@
         float newValue = [[change objectForKey:@"new"] floatValue];
         float oldValue = [[change objectForKey:@"old"] floatValue];
         // TODO: 这里实现你的逻辑代码
-        self.myPlayVolume = newValue;
-        [self.myVolumeSlider setValue:self.myPlayVolume];
+        [self.myVolumeSlider setValue:newValue];
         NSLog(@"old -> new %.2f %.2f", oldValue, newValue);
     }
-    else if([keyPath isEqualToString:@"myPlayRate"]){
-        self.myPlayRateLabel.text = [NSString stringWithFormat:@"%.1f", self.myPlayRate];
+    else if([keyPath isEqualToString:@"myPlayRate"]){ //
+//        self.myPlayRateLabel.text = [NSString stringWithFormat:@"%.1f", self.myPlayRate / 10.0];
+//        self.myPlayer.rate = self.myPlayRate / 10.0;
     }
 }
 /*
@@ -112,17 +110,28 @@
 
 
 - (IBAction)onSlow:(id)sender{
-//    if (self.myPlayRate > ) {
-    self.myPlayRate = 0.5;
-        self.myPlayer.rate = self.myPlayRate;
-//    }
+    if (self.myPlayRate > 10) {
+        self.myPlayRate -= 10;
+    }
+    else if (self.myPlayRate > 2){
+        self.myPlayRate -= 2;
+    }
+    
+    self.myPlayRateLabel.text = [NSString stringWithFormat:@"%.1f", self.myPlayRate / 10.0];
+    self.myPlayer.rate = self.myPlayRate / 10.0;
 }
 
 - (IBAction)onFast:(id)sender{
-//    if (self.myPlayRate < 5.0) {
-        self.myPlayRate = 2;
-        self.myPlayer.rate = self.myPlayRate;
-//    }
+    if (self.myPlayRate < 10) {
+        
+        self.myPlayRate += 2;
+    }
+    else if (self.myPlayRate < 50){
+        self.myPlayRate += 10;
+    }
+    
+    self.myPlayRateLabel.text = [NSString stringWithFormat:@"%.1f", self.myPlayRate / 10.0];
+    self.myPlayer.rate = self.myPlayRate / 10.0;
 }
 
 - (IBAction)onPlayCycle:(UISwitch*)sender{
@@ -145,9 +154,16 @@
     else{
         [self presentMessageTips:@"文件名不能为空"];
     }
+    [self.myTitleText resignFirstResponder];
 }
 
 - (IBAction)onVolume:(id)sender{
+    
+//    [self.myPlayer setVolume:self.myVolumeSlider.value];
+//    return ;  设置的是player 的音量
+    
+    //设置的是系统音量 xia mian
+    
     MPVolumeView *volumeView = [[MPVolumeView alloc] init];
     UISlider* volumeViewSlider = nil;
     for (UIView *view in [volumeView subviews]){
@@ -223,7 +239,8 @@
     self.myPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:self.myPlayRecord.url error:nil];
     [self.myPlayer setDelegate:self];
     [self.myPlayer setEnableRate:YES];
-    [self.myPlayer setRate:self.myPlayRate];
+    [self.myPlayer setRate:self.myPlayRate / 10.0];
+    [self.myPlayer setVolume:0.5];
     if (self.myPlayCycle) {
         [self.myPlayer setNumberOfLoops:-1];
     }
