@@ -24,6 +24,7 @@
 
 - (BOOL)deleteRecordByIndex:(long)index;
 
+- (BOOL)modifyTitleByRecord:(Record*)record Title:(NSString*)title;
 
 #pragma mark - get
 

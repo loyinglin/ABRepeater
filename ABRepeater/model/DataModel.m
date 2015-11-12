@@ -63,6 +63,19 @@
 }
 #pragma mark - set
 
+- (BOOL)modifyTitleByRecord:(Record *)record Title:(NSString *)title{
+    NSArray* paths =@[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject], [NSString stringWithFormat:@"%@.m4a", title]];
+    NSURL* copyToUrl = [NSURL fileURLWithPathComponents:paths];
+    
+    BOOL ret;
+    ret = [[NSFileManager defaultManager] moveItemAtURL:record.url toURL:copyToUrl error:nil];
+    if (ret) {
+        record.url = copyToUrl;
+        record.title = title;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"DataModelChange" object:nil];
+    }
+    return ret;
+}
 
 - (void)saveRecord{
     NSArray* paths = @[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject], @"__RecordTmp.m4a"];

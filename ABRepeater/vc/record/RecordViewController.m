@@ -14,6 +14,9 @@
 @interface RecordViewController ()
 @property (nonatomic, strong) AVAudioRecorder* myRecorder;
 @property (nonatomic, strong) Record* myPlayReocord;
+
+@property (nonatomic) BOOL mySave;
+@property (nonatomic) BOOL myTouchRecord; //正在按键录音
 @end
 
 @implementation RecordViewController
@@ -36,6 +39,10 @@
     self.myRecorder.meteringEnabled = YES;
     [self.myRecorder prepareToRecord];
     
+    __weak typeof(self) weakSelf = self;
+    [[NSNotificationCenter defaultCenter] addObserverForName:@"DataModelChange" object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        [weakSelf.myRecordTable reloadData];
+    }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -55,6 +62,9 @@
 
 #pragma mark - view init
 
+
+
+
 #pragma mark - play
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if ([segue.identifier isEqualToString: @"open_play_record_board"]) {
@@ -66,11 +76,12 @@
 #pragma mark - action
 
 - (IBAction)onLeftButton:(UIBarButtonItem*)sender{
-    NSLog(@"%@", [sender description]);
     if (!self.myRecordTable.editing) {
+        sender.title = @"完成";
         [self.myRecordTable setEditing:YES animated:YES];
     }
     else {
+        sender.title = @"编辑";
         [self.myRecordTable setEditing:NO animated:NO];
     }
 }
@@ -162,7 +173,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     RecordViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     
-    cell.myTitleLabel.text = [[DataModel instance] getRecordByIndex:indexPath.row].title;
+    AVAudioPlayer* player = [[AVAudioPlayer alloc] initWithContentsOfURL:[[DataModel instance] getRecordByIndex:indexPath.row].url error:nil];
+    [cell viewInitwithTitle:[[DataModel instance] getRecordByIndex:indexPath.row].title Duration:player.duration];
     return cell;
 }
 
@@ -208,7 +220,7 @@
 
 
 - (void) audioRecorderDidFinishRecording:(AVAudioRecorder *)avrecorder successfully:(BOOL)flag {
-    NSLog(@"record end");
+    NSLog(@"record end suc:%d", flag);
 }
 
 #pragma mark - notify

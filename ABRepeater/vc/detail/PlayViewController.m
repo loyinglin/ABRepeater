@@ -7,12 +7,20 @@
 //
 
 #import "PlayViewController.h"
+#import "NSObject+LYUITipsView.h"
+#import <MediaPlayer/MediaPlayer.h>
 
 @interface PlayViewController ()
-@property (nonatomic, strong) AVAudioPlayer* myPlayer;
-@property (nonatomic) BOOL myPlaying;
-@property (nonatomic, strong) NSTimer* myTimer;
-@property (nonatomic, strong) Repeat* myRepeat;
+@property (nonatomic, strong) AVAudioPlayer*    myPlayer;
+@property (nonatomic, strong) NSTimer*          myTimer;
+@property (nonatomic, strong) Repeat*           myRepeat;
+
+// state
+@property (nonatomic) float                     myPlayRate;
+@property (nonatomic) BOOL                      myPlayCycle;
+@property (nonatomic) BOOL                      myPlaying;
+@property (nonatomic) float                     myPlayVolume;
+
 @end
 
 @implementation PlayViewController
@@ -21,8 +29,25 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.myPlaying = NO;
+    self.myPlayCycle = NO;
+    self.myPlayRate = 1.0;
+    self.myPlayVolume = [AVAudioSession sharedInstance].outputVolume;
+    [self.myVolumeSlider setValue:self.myPlayVolume];
+    
+    self.myTitleText.text = self.myPlayRecord.title;
+    
+    [[AVAudioSession sharedInstance] addObserver:self forKeyPath:@"outputVolume" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:(void *)[AVAudioSession sharedInstance]];
+    
+    [self addObserver:self forKeyPath:@"myPlayRate" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+    
     [self prepareToPlay];
     self.myTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(onProgress) userInfo:nil repeats:YES];
+}
+
+- (void)dealloc
+{
+    [[AVAudioSession sharedInstance] removeObserver:self forKeyPath:@"outputVolume"];
+    [self removeObserver:self forKeyPath:@"myPlayRate"];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -30,6 +55,20 @@
     // Dispose of any resources that can be recreated.
 }
 
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context{
+    if(context == (__bridge void *)[AVAudioSession sharedInstance]){
+        float newValue = [[change objectForKey:@"new"] floatValue];
+        float oldValue = [[change objectForKey:@"old"] floatValue];
+        // TODO: 这里实现你的逻辑代码
+        self.myPlayVolume = newValue;
+        [self.myVolumeSlider setValue:self.myPlayVolume];
+        NSLog(@"old -> new %.2f %.2f", oldValue, newValue);
+    }
+    else if([keyPath isEqualToString:@"myPlayRate"]){
+        self.myPlayRateLabel.text = [NSString stringWithFormat:@"%.1f", self.myPlayRate];
+    }
+}
 /*
 #pragma mark - Navigation
 
@@ -48,9 +87,93 @@
 
 #pragma mark - ibaction
 
+- (IBAction)onForward:(id)sender{
+    if (self.myPlayer.playing) {
+        if (self.myPlayer.currentTime + 5 < self.myPlayer.duration) {
+            self.myPlayer.currentTime += 5;
+        }
+        else{
+            self.myPlayer.currentTime = self.myPlayer.duration;
+        }
+    }
+}
+
+- (IBAction)onBackward:(id)sender{
+    
+    if (self.myPlayer.playing) {
+        if (self.myPlayer.currentTime - 5 > 0){
+            self.myPlayer.currentTime -= 5;
+        }
+        else{
+            self.myPlayer.currentTime = 0;
+        }
+    }
+}
+
+
+- (IBAction)onSlow:(id)sender{
+//    if (self.myPlayRate > ) {
+    self.myPlayRate = 0.5;
+        self.myPlayer.rate = self.myPlayRate;
+//    }
+}
+
+- (IBAction)onFast:(id)sender{
+//    if (self.myPlayRate < 5.0) {
+        self.myPlayRate = 2;
+        self.myPlayer.rate = self.myPlayRate;
+//    }
+}
+
+- (IBAction)onPlayCycle:(UISwitch*)sender{
+    self.myPlayCycle = sender.on;
+    [self.myPlayer setNumberOfLoops:self.myPlayCycle ? -1 : 1];
+}
+
+- (IBAction)onSaveTitle:(id)sender{
+    if (self.myTitleText.text.length > 0) {
+        if ([self.myPlayRecord.title isEqualToString:self.myTitleText.text]) { // 文件名一样
+            
+        }
+        else if([[DataModel instance] modifyTitleByRecord:self.myPlayRecord Title:self.myTitleText.text]){
+            [self presentMessageTips:@"保存成功"];
+        }
+        else{
+            [self presentMessageTips:@"保存失败\n请检查文件名"];
+        }
+    }
+    else{
+        [self presentMessageTips:@"文件名不能为空"];
+    }
+}
+
+- (IBAction)onVolume:(id)sender{
+    MPVolumeView *volumeView = [[MPVolumeView alloc] init];
+    UISlider* volumeViewSlider = nil;
+    for (UIView *view in [volumeView subviews]){
+        if ([view.class.description isEqualToString:@"MPVolumeSlider"]){
+            volumeViewSlider = (UISlider*)view;
+            break;
+        }
+    }
+    
+    // retrieve system volume
+//    float systemVolume = volumeViewSlider.value;
+    
+    // change system volume, the value is between 0.0f and 1.0f
+    [volumeViewSlider setValue:self.myVolumeSlider.value animated:NO];
+    
+    // send UI control event to make the change effect right now.
+    [volumeViewSlider sendActionsForControlEvents:UIControlEventTouchUpInside];
+}
+
 - (IBAction)onPlay:(id)sender{
 //    [self prepareToPlay];
     [self playRecord];
+}
+
+- (IBAction)onPause:(id)sender{
+    [self.myPlayer pause];
 }
 
 - (IBAction)onNext:(id)sender{
@@ -99,6 +222,11 @@
     
     self.myPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:self.myPlayRecord.url error:nil];
     [self.myPlayer setDelegate:self];
+    [self.myPlayer setEnableRate:YES];
+    [self.myPlayer setRate:self.myPlayRate];
+    if (self.myPlayCycle) {
+        [self.myPlayer setNumberOfLoops:-1];
+    }
     
     self.myRepeat = nil;
 }
@@ -112,7 +240,7 @@
 
 - (void)onProgress{
     if (self.myRepeat && self.myRepeat.timeB) { //复读模式中
-        if (self.myPlayer.currentTime > self.myRepeat.timeB) {
+        if (self.myPlayer.currentTime >= self.myRepeat.timeB) {
             self.myPlayer.currentTime = self.myRepeat.timeA;
         }
     }
@@ -127,8 +255,8 @@
     time = self.myPlayer.duration;
     self.myEndLabel.text = [NSString stringWithFormat:@"%02d:%02d", time / 60, time % 60];
 }
-#pragma mark - delegate
 
+#pragma mark - delegate
 - (void) audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
     NSLog(@"play end");
     self.myPlaying = NO;

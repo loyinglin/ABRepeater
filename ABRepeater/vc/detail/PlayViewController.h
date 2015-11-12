@@ -14,9 +14,12 @@
 
 @property (nonatomic , strong) Record* myPlayRecord;
 
-@property (nonatomic , strong) IBOutlet UIProgressView* myProcess;
-@property (nonatomic , strong) IBOutlet UILabel*    myStartLabel;
-@property (nonatomic , strong) IBOutlet UILabel*    myEndLabel;
-@property (nonatomic , strong) IBOutlet UIButton*   myRepeatButton;
+@property (nonatomic , strong) IBOutlet UIProgressView*     myProcess;
+@property (nonatomic , strong) IBOutlet UILabel*            myStartLabel;
+@property (nonatomic , strong) IBOutlet UILabel*            myEndLabel;
+@property (nonatomic , strong) IBOutlet UIButton*           myRepeatButton;
+@property (nonatomic , strong) IBOutlet UITextField*        myTitleText;
+@property (nonatomic , strong) IBOutlet UILabel*            myPlayRateLabel;
+@property (nonatomic , strong) IBOutlet UISlider*           myVolumeSlider;
 
 @end

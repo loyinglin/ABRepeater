@@ -11,5 +11,9 @@
 @interface RecordViewCell : UITableViewCell
 
 @property (nonatomic , strong) IBOutlet UILabel* myTitleLabel;
+@property (nonatomic , strong) IBOutlet UIImageView* myRecordImg;
+@property (nonatomic , strong) IBOutlet UILabel* myDurationLabel;
+
+- (void)viewInitwithTitle:(NSString*)title Duration:(long)duration;
 
 @end
