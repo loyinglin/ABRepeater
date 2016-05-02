@@ -235,6 +235,7 @@
         [session setActive:NO error:nil];
         self.myPlayer = nil;
     }
+//    [[NSURL alloc] i]
     
     self.myPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:self.myPlayRecord.url error:nil];
     [self.myPlayer setDelegate:self];

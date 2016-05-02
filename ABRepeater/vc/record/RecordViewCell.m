@@ -25,7 +25,8 @@
 - (void)viewInitwithTitle:(NSString *)title Duration:(long)duration{
     self.myTitleLabel.text = title;
     UIImage* img = [UIImage imageNamed:@"Team_08.png"];
-    img = [img stretchableImageWithLeftCapWidth:4 topCapHeight:4];
+    img = [img resizableImageWithCapInsets:UIEdgeInsetsMake(8, 8, 8, 16) resizingMode:UIImageResizingModeStretch];
+//    UIImage animatedImageNamed:<#(nonnull NSString *)#> duration:<#(NSTimeInterval)#>
     [self.myRecordImg setImage:img];
     long len = 0;
     
